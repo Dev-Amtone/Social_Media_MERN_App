@@ -1,33 +1,29 @@
-# MERN-Skeleton-User-auth-CRUD
+# Social_Media_MERN_App
 
-Overview of the skeleton application
-The skeleton application will encapsulate rudimentary features and a workflow that's repeated for most MERN applications. We will build the skeleton as a basic but fully functioning MERN web application with user create, read, update, delete (CRUD), and authentication-authorization (auth) capabilities; this will also demonstrate how to develop, organize, and run code for general web applications built using this
-stack. The aim is to keep the skeleton as simple as possible so that it is easy to extend and can be used as a base application for developing different MERN applications.
 
-•Backend Development:
+Social media is an integral part of the web these days, and many of the user-centric web applications we build end up requiring a social component down the line to drive user engagement. This Social media application will include these features :
 
--Backend code setup
 
--User model with Mongoose
+-User profile with a description and a photo Users following each other
 
--User CRUD API endpoints with Express 
+-Who to follow suggestions
 
--User Auth with JSON Web Tokens 
+-Posting messages with photos
 
--Running backend code and checking APIs
+-Newsfeed with posts from followed users Listing posts by user
 
-•Frontend Development:
+-Liking posts
 
--Frontend features of the skeleton
+-Commenting on posts
 
--Setting up development with React, React Router, and Material-UI
 
--Rendering a home page built with React
 
--Backend user API integration
+- How to run this code:
 
--Auth integration for restricted access
+ -Open command line in the cloned folder :
 
--User list, profile, edit, delete, sign up, and sign in UI to complete the user frontend
-
--Basic server-side rendering
+   - To install dependencies, run npm install or yarn
+  
+   - To run the application for development, run npm run development or yarn development
+  
+ -Open localhost:3000 in the browser
