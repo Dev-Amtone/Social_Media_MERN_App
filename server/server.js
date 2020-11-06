@@ -10,14 +10,17 @@ import cors from "cors";
 import helmet from "helmet";
 import config from "./../config/config";
 import mongoose from "mongoose";
-import userRouter from "./routes/user.routes";
+import userRouter from "./routes/user.routes.js";
 import authRoutes from "./routes/auth.routes.js";
+import postRoutes from "./routes/post.routes.js";
+
 import React from "react";
 import ReactDOMServer from "react-dom/server";
-import StaticRouter from "react-router-dom/StaticRouter";
 import MainRouter from "./../client/MainRouter";
 import { ServerStyleSheets, ThemeProvider } from "@material-ui/styles";
 import theme from "./../client/theme";
+
+const StaticRouter = require("react-router-dom").StaticRouter;
 
 const app = express();
 devBundle.compile(app);
@@ -45,6 +48,7 @@ mongoose.connect(config.mongoUri, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useUnifiedTopology: true,
+  useFindAndModify: false,
 });
 mongoose.connection.on("error", () => {
   throw new Error(`unable to connect to database: ${mongoUri}`);
@@ -53,6 +57,8 @@ mongoose.connection.on("error", () => {
 app.use("/", userRouter);
 
 app.use("/", authRoutes);
+
+app.use("/", postRoutes);
 
 app.use((err, req, res, next) => {
   if (err.name === "UnauthorizedError") {
@@ -70,7 +76,6 @@ app.get("*", (req, res) => {
     sheets.collect(
       <StaticRouter location={req.url} context={context}>
         <ThemeProvider theme={theme}>
-          {" "}
           <MainRouter />
         </ThemeProvider>
       </StaticRouter>

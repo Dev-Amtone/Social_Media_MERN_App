@@ -16,21 +16,24 @@ import ArrowForward from "@material-ui/icons/ArrowForward";
 import ListItemText from "@material-ui/core/ListItemText";
 
 const useStyles = makeStyles((theme) => ({
-  card: {
+  root: theme.mixins.gutters({
     maxWidth: 600,
     margin: "auto",
+    padding: theme.spacing(3),
     marginTop: theme.spacing(5),
-  },
+  }),
   title: {
-    padding: `${theme.spacing(3)}px ${theme.spacing(2.5)}px ${theme.spacing(
-      2
-    )}px`,
-    color: theme.palette.openTitle,
+    margin: `${theme.spacing(2)}px ${theme.spacing(1)}px 0`,
+    color: theme.palette.protectedTitle,
+    fontSize: "1em",
   },
-  media: {
-    minHeight: 400,
+  bigAvatar: {
+    width: 60,
+    height: 60,
+    margin: 10,
   },
 }));
+
 export default function Users() {
   const classes = useStyles();
 
@@ -59,12 +62,17 @@ export default function Users() {
       <List dense>
         {users.map((item, i) => {
           return (
-            <Link to={"/user/" + item._id} key={i}>
+            <Link
+              to={"/user/" + item._id}
+              key={i}
+              style={{ color: "black", textDecoration: "none" }}
+            >
               <ListItem button>
                 <ListItemAvatar>
-                  <Avatar>
-                    <Person />
-                  </Avatar>
+                  <Avatar
+                    src={`/api/users/photo/${item._id}?${new Date().getTime()}`}
+                    className={classes.bigAvatar}
+                  ></Avatar>
                 </ListItemAvatar>
                 <ListItemText primary={item.name} />{" "}
                 <ListItemSecondaryAction>

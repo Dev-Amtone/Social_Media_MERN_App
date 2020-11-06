@@ -14,6 +14,12 @@ import {
   Button,
   Divider,
   makeStyles,
+  AddIcon,
+  FilledInput,
+  List,
+  ListItem,
+  ListItemAvatar,
+  Avatar,
 } from "@material-ui/core";
 
 import { Link } from "react-router-dom";
@@ -21,17 +27,36 @@ const useStyles = makeStyles((theme) => ({
   card: {
     maxWidth: 600,
     margin: "auto",
+    textAlign: "center",
     marginTop: theme.spacing(5),
+    paddingBottom: theme.spacing(2),
   },
-
   title: {
-    padding: `${theme.spacing(3)}px ${theme.spacing(2.5)}px ${theme.spacing(
-      2
-    )}px`,
-    color: theme.palette.openTitle,
+    margin: theme.spacing(2),
+    color: theme.palette.protectedTitle,
   },
-  media: {
-    minHeight: 400,
+  error: {
+    verticalAlign: "middle",
+  },
+  textField: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: 300,
+  },
+  submit: {
+    margin: "auto",
+    marginBottom: theme.spacing(2),
+  },
+  bigAvatar: {
+    width: 60,
+    height: 60,
+    margin: "auto",
+  },
+  input: {
+    display: "none",
+  },
+  filename: {
+    marginLeft: "10px",
   },
 }));
 
@@ -41,13 +66,17 @@ export default function EditProfile({ match }) {
     name: "",
     password: "",
     email: "",
+    about: "",
+    photo: "",
     error: "",
     redirectToProfile: false,
+    photoUrl: "",
   });
   const [redirectToSignin, setRedirectToSignin] = useState(false);
 
   const handleChange = (name) => (event) => {
-    setValues({ ...values, [name]: event.target.value });
+    const value = name === "photo" ? event.target.files[0] : event.target.value;
+    setValues({ ...values, [name]: value });
   };
 
   useEffect(() => {
@@ -65,11 +94,14 @@ export default function EditProfile({ match }) {
         setRedirectToSignin(true);
       } else {
         setValues({
+          userId: data._id,
           name: data.name,
           email: data.email,
           password: "",
+          about: data.about,
           error: "",
           redirectToProfile: false,
+          photoUrl: `/api/users/photo/${data._id}?${new Date().getTime()}`,
         });
       }
     });
@@ -82,11 +114,18 @@ export default function EditProfile({ match }) {
   }
 
   const clickSubmit = () => {
+    let userData = new FormData();
+    values.name && userData.append("name", values.name);
+    values.email && userData.append("email", values.email);
+    values.password && userData.append("password", values.password);
+    values.about && userData.append("about", values.about);
+    values.photo && userData.append("photo", values.photo);
     const jwt = isAuthenticated();
     const user = {
       name: values.name || undefined,
       email: values.email || undefined,
       password: values.password || undefined,
+      about: values.about || undefined,
     };
     update(
       {
@@ -95,7 +134,7 @@ export default function EditProfile({ match }) {
       {
         t: jwt.token,
       },
-      user
+      userData
     ).then((data) => {
       if (data && data.error) {
         setValues({ ...values, error: data.error });
@@ -118,17 +157,59 @@ export default function EditProfile({ match }) {
       <Card className={classes.card}>
         {" "}
         <CardContent>
-          <Typography variant="h6" className={classes.title}>
+          <Typography variant="h6" className={classes.title} align="center">
             {" "}
             Edit Profile{" "}
           </Typography>
+          <List dense>
+            <ListItem style={{ justifyContent: "center" }}>
+              <ListItemAvatar>
+                <Avatar src={values.photoUrl} className={classes.bigAvatar} />
+              </ListItemAvatar>
+            </ListItem>
+          </List>
+          <CardActions style={{ justifyContent: "center" }}>
+            <input
+              accept="image/*"
+              type="file"
+              onChange={handleChange("photo")}
+              style={{ display: "none" }}
+              id="icon-button-file"
+            />
+            <label htmlFor="icon-button-file">
+              <Button variant="contained" color="default" component="span">
+                Upload
+              </Button>
+            </label>
+            <span className={classes.filename}>
+              {" "}
+              {values.photo ? values.photo.name : ""}
+            </span>
+          </CardActions>
+          <br />
           <TextField
             id="name"
             label="Name"
             className={classes.textField}
             value={values.name}
+            style={{ margin: 8 }}
+            fullWidth
+            margin="normal"
             onChange={handleChange("name")}
             margin="normal"
+          />
+          <br />
+          <TextField
+            id="multiline-flexible"
+            label="About"
+            multiline
+            rows="2"
+            className={classes.textField}
+            value={values.about}
+            style={{ margin: 8 }}
+            fullWidth
+            margin="normal"
+            onChange={handleChange("about")}
           />
           <br />
           <TextField
@@ -137,6 +218,9 @@ export default function EditProfile({ match }) {
             label="Email"
             className={classes.textField}
             value={values.email}
+            style={{ margin: 8 }}
+            fullWidth
+            margin="normal"
             onChange={handleChange("email")}
             margin="normal"
           />
@@ -147,6 +231,9 @@ export default function EditProfile({ match }) {
             label="Password"
             className={classes.textField}
             value={values.password}
+            style={{ margin: 8 }}
+            fullWidth
+            margin="normal"
             onChange={handleChange("password")}
             margin="normal"
           />{" "}
@@ -161,7 +248,7 @@ export default function EditProfile({ match }) {
             </Typography>
           )}
         </CardContent>
-        <CardActions>
+        <CardActions style={{ justifyContent: "center" }}>
           <Button
             color="primary"
             variant="contained"

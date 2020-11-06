@@ -14,6 +14,15 @@ const UserSchema = new mongoose.Schema({
     match: [/.+\@.+\..+/, "Please fill a valid email address"],
     required: "Email is required",
   },
+  about: {
+    type: String,
+    trim: true,
+  },
+  photo: {
+    data: Buffer,
+    contentType: String,
+  },
+
   created: {
     type: Date,
     default: Date.now,
@@ -24,6 +33,8 @@ const UserSchema = new mongoose.Schema({
     required: "Password  required",
   },
   salt: { type: String },
+  following: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
+  followers: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
 });
 UserSchema.virtual("password")
   .set(function (password) {
